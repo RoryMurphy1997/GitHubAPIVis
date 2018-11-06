@@ -18,7 +18,7 @@ github_token <- oauth2.0_token(oauth_endpoints("github"), myapp)
 
 # Use API to find users
 gtoken <- config(token = github_token)
-req <- GET("https://api.github.com/users", gtoken)
+req <- GET("https://api.github.com/repositories", gtoken)
 
 # Take action on http error
 stop_for_status(req)
@@ -27,12 +27,12 @@ stop_for_status(req)
 json1 = content(req)
 
 # Convert to a data.frame
-gitDF = jsonlite::fromJSON(jsonlite::toJSON(json1))
-#Iterate through and print all of the IDs
-for(i in 1:nrow(gitDF))
+gitReposDF = jsonlite::fromJSON(jsonlite::toJSON(json1))
+#Iterate through and get all
+for(i in 1:nrow(gitReposDF))
 {
-  print(gitDF[i,2])
+  print(gitReposDF[i,1])
 }
 
 # Subset data.frame
-gitDF[gitDF$full_name == "jtleek/datasharing", "created_at"] 
+gitDF[gitReposDF$full_name == "jtleek/datasharing", "created_at"] 
