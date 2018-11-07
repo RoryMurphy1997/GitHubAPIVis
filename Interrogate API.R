@@ -20,7 +20,7 @@ github_token <- oauth2.0_token(oauth_endpoints("github"), myapp)
 
 # Use API to find users
 gtoken <- config(token = github_token)
-req <- GET("https://api.github.com/users/RoryMurphy1997/repos", gtoken)
+req <- GET("https://api.github.com/repositories", gtoken)
 
 # Take action on http error
 stop_for_status(req)
@@ -30,17 +30,15 @@ json1 = content(req)
 
 # Convert to a data.frame
 gitReposDF = jsonlite::fromJSON(jsonlite::toJSON(json1))
-#Gives null for dataframe with one item, need to fix
-nrow(gitReposDF)
-if(is.null(nrow(gitReposDF)))
-{
-  print("Repository is empty")
-}else{
-  for(i in 1:nrow(gitReposDF))
-  {
-    print(gitReposDF$full_name)
-  }
-}
+gitReposDF$name
 
-# Subset data.frame
-gitReposDF[gitReposDF$full_name == "jtleek/datasharing", "created_at"] 
+# Find Microsis repository
+gitMicrosis = gitReposDF[gitReposDF$name == "microsis",] 
+
+#Get languages used in Microsis repository
+gitMicrosis$languages_url
+req2 = GET(paste(gitMicrosis$languages_url), gtoken)
+stop_for_status(req2)
+json2 = content(req2)
+gitMicrosisCollaboratorsDF = jsonlite::fromJSON(jsonlite::toJSON(json2))
+gitMicrosisCollaboratorsDF
