@@ -1,18 +1,17 @@
 #Installs relevant packages only if they arent already installed
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load("jsonlite", "httpuv", "httr")
-#install.packages("jsonlite")
-#install.packages("httpuv")
-#install.packages("httr")
 
-#Run these 3 lines the first time code is run
+
+#Opens necessary libraries
 library(jsonlite)
 library(httpuv)
 library(httr)
 
-# Run from here each time
+
 oauth_endpoints("github")
 
+#Stores relevant OAth information
 myapp <- oauth_app(appname = "Software_Engineering_GitHub_Assignment",
                    key = "9cdd2af0684fe05044a7",
                    secret = "a58134728046024f716360e2b7bf4c97210e38fe")
@@ -20,7 +19,7 @@ myapp <- oauth_app(appname = "Software_Engineering_GitHub_Assignment",
 # Get OAuth credentials
 github_token <- oauth2.0_token(oauth_endpoints("github"), myapp)
 
-# Use API to find users
+# Use API to find repositories
 gtoken <- config(token = github_token)
 req <- GET("https://api.github.com/repositories", gtoken)
 
