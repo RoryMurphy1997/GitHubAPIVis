@@ -1,7 +1,9 @@
-#Run these 3 lines once to install necessary packages
-install.packages("jsonlite")
-install.packages("httpuv")
-install.packages("httr")
+#Installs relevant packages only if they arent already installed
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load("jsonlite", "httpuv", "httr")
+#install.packages("jsonlite")
+#install.packages("httpuv")
+#install.packages("httr")
 
 #Run these 3 lines the first time code is run
 library(jsonlite)
@@ -40,5 +42,5 @@ gitMicrosis$languages_url
 req2 = GET(paste(gitMicrosis$languages_url), gtoken)
 stop_for_status(req2)
 json2 = content(req2)
-gitMicrosisCollaboratorsDF = jsonlite::fromJSON(jsonlite::toJSON(json2))
-gitMicrosisCollaboratorsDF
+gitMicrosisLanguagesDF = jsonlite::fromJSON(jsonlite::toJSON(json2))
+gitMicrosisLanguagesDF
