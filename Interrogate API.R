@@ -60,12 +60,14 @@ for(i in 2:length(gitReposDF))
     {
       if(is.element(names(dataFrameTemp)[j], names(gitLanguagesUsedDF)))
       {
-        #gitLanguagesUsedDF$names(dataFrameTemp)[j] = gitLanguagesUsedDF$names(dataFrameTemp)[j] + dataFrameTemp$names(dataFrameTemp)[j]
+        #Add total number of bytes to existing column
+        index = match(names(dataFrameTemp)[j], names(gitLanguagesUsedDF))
+        gitLanguagesUsedDF[index] = as.numeric(gitLanguagesUsedDF[index]) + as.numeric(dataFrameTemp[j])
         
       }else
       {
         #Sets up new column
-        gitLanguagesUsedDF$temp = dataFrameTemp[j]
+        gitLanguagesUsedDF$temp = as.numeric(dataFrameTemp[j])
         names(gitLanguagesUsedDF)[which(names(gitLanguagesUsedDF) == "temp")] <- names(dataFrameTemp)[j]
       }
     }
@@ -85,5 +87,5 @@ json2 = content(req2)
 gitMicrosisLanguagesDF = jsonlite::fromJSON(jsonlite::toJSON(json2))
 #Number = Number of bytes of code written in the language
 is.element("Ruby", names(gitMicrosisLanguagesDF)[])
+match("JavaScript", names(gitMicrosisLanguagesDF))
 gitMicrosisLanguagesDF[1]
-
