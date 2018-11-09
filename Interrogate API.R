@@ -31,7 +31,48 @@ json1 = content(req)
 
 # Convert to a data.frame
 gitReposDF = jsonlite::fromJSON(jsonlite::toJSON(json1))
-gitReposDF$name
+
+#Initialise first item in languages used dataframe
+reqTemp = GET(paste(gitReposDF$languages_url[1]), gtoken)
+stop_for_status(reqTemp)
+jsonTemp = content(reqTemp)
+gitLanguagesUsedDF = jsonlite::fromJSON(jsonlite::toJSON(jsonTemp))
+length(gitLanguagesUsedDF)
+
+#Finds languages used by each repository and increases count of each one found by 1 and number of bytes used
+for(i in 2:length(gitReposDF))
+{
+  reqTemp = GET(paste(gitReposDF$languages_url[i]), gtoken)
+  stop_for_status(reqTemp)
+  jsonTemp = content(reqTemp)
+  dataFrameTemp = jsonlite::fromJSON(jsonlite::toJSON(jsonTemp))
+  #Checks if repository actually has any languages listed
+  if(length(dataFrameTemp) == 0)
+  {
+    
+  }else
+  {
+    #For each column in temporary data frame, checks whether is appears in current data frame, adding number of bytes of
+    #code used in the current repository being searched in the language to the total amount of bytes of a language used
+    #if the language is already in the data frame or adding the new language and the number of bytes used by the current
+    #repository of it to the total data frame
+    for(j in 1:length(dataFrameTemp))
+    {
+      if(is.element(names(dataFrameTemp)[j], names(gitLanguagesUsedDF)))
+      {
+        #gitLanguagesUsedDF$names(dataFrameTemp)[j] = gitLanguagesUsedDF$names(dataFrameTemp)[j] + dataFrameTemp$names(dataFrameTemp)[j]
+        
+      }else
+      {
+        #Sets up new column
+        gitLanguagesUsedDF$temp = dataFrameTemp[j]
+        names(gitLanguagesUsedDF)[which(names(gitLanguagesUsedDF) == "temp")] <- names(dataFrameTemp)[j]
+      }
+    }
+  }
+}
+gitLanguagesUsedDF
+
 
 # Find Microsis repository
 gitMicrosis = gitReposDF[gitReposDF$name == "microsis",] 
@@ -42,4 +83,7 @@ req2 = GET(paste(gitMicrosis$languages_url), gtoken)
 stop_for_status(req2)
 json2 = content(req2)
 gitMicrosisLanguagesDF = jsonlite::fromJSON(jsonlite::toJSON(json2))
-gitMicrosisLanguagesDF
+#Number = Number of bytes of code written in the language
+is.element("Ruby", names(gitMicrosisLanguagesDF)[])
+gitMicrosisLanguagesDF[1]
+
