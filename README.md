@@ -7,4 +7,4 @@ After this, simply download "Interrogate API.R", open R, set working directory t
 
 source("Interrogate API.R", echo = TRUE)
 
-This will run the code necessary to produce the visualisation, installing the needed packages if they have not been installed.
+This will run the code necessary to produce the visualisation, installing the needed packages in R if they have not been installed on your device.
