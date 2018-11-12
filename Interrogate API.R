@@ -35,46 +35,51 @@ json1 = content(req)
 
 # Convert to a data.frame
 gitReposDF = jsonlite::fromJSON(jsonlite::toJSON(json1))
-gitReposDF$name[2]
-#Find most popular language of each repository 
-#ADDNAMEDEFBACK
-Languages = data.frame(Repo=character(), Language=character(), Bytes=integer())
-
-PopularLanguages = function(Languages, gitReposDF)
+PopularLanguages = function(gitRepos)
 {
-  for(i in 1:length(gitReposDF))
+  #Re-initialise Data Frame for unit testing
+  Languages = NULL
+  if(is.null(nrow(gitRepos)) | is.null(gitRepos$languages_url))
   {
-    reqTemp = GET(paste(gitReposDF$languages_url[i]), gtoken)
-    stop_for_status(reqTemp)
-    jsonTemp = content(reqTemp)
-    dataFrameTemp = jsonlite::fromJSON(jsonlite::toJSON(jsonTemp))
-    name = paste(gitReposDF$name[i])
-    #If no languages are listed, adds to data frame with a blank value
-    if(length(dataFrameTemp) == 0)
+    print("Incorrect data frame given for repos")
+    return(Languages)
+  }else
+  {
+    for(i in 1:nrow(gitRepos))
     {
-      newRow = data.frame(Repo=name, Language="None Entered", Bytes=0)
-      Languages = rbind(Languages, newRow)
-    }else
-    {
-      language = NULL
-      bytes = -1
-      #Find most popular language for the repository
-      for(j in 1:length(dataFrameTemp))
+      reqTemp = GET(paste(gitRepos$languages_url[i]), gtoken)
+      stop_for_status(reqTemp)
+      jsonTemp = content(reqTemp)
+      dataFrameTemp = jsonlite::fromJSON(jsonlite::toJSON(jsonTemp))
+      dataFrameTemp
+      name = paste(gitRepos$name[i])
+      #If no languages are listed, adds to data frame with a blank value
+      if(length(dataFrameTemp) == 0)
       {
-        if(as.numeric(dataFrameTemp[j]) > bytes)
+        newRow = data.frame(Repo=name, Language="None Entered", Bytes=0)
+        Languages = rbind(Languages, newRow)
+      }else
+      {
+        language = NULL
+        bytes = -1
+        #Find most popular language for the repository
+        for(j in 1:length(dataFrameTemp))
         {
-          language = names(dataFrameTemp)[j]
-          bytes = as.numeric(dataFrameTemp[j])
+          if(as.numeric(dataFrameTemp[j]) > bytes)
+          {
+            language = names(dataFrameTemp)[j]
+            bytes = as.numeric(dataFrameTemp[j])
+          }
         }
+        #Adds it to DF
+        newRow = data.frame(Repo=name, Language=language, Bytes=bytes)
+        Languages = rbind(Languages, newRow)
       }
-      #Adds it to DF
-      newRow = data.frame(Repo=name, Language=language, Bytes=bytes)
-      Languages = rbind(Languages, newRow)
     }
+    return(Languages)
   }
-  return(Languages)
 }
 
-Languages = PopularLanguages(Languages, gitReposDF)
+Languages = PopularLanguages(gitReposDF)
 Languages
 
