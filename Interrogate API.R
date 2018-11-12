@@ -1,12 +1,16 @@
 #Installs relevant packages only if they arent already installed
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load("jsonlite", "httpuv", "httr")
+pacman::p_load("jsonlite", "httpuv", "httr", "devtools")
 
 
 #Opens necessary libraries
 library(jsonlite)
 library(httpuv)
 library(httr)
+library(devtools)
+
+#Installs the r2d3 library
+install_github("rstudio/r2d3")
 
 
 oauth_endpoints("github")
