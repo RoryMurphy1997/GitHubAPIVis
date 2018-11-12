@@ -38,7 +38,7 @@ gitReposDF = jsonlite::fromJSON(jsonlite::toJSON(json1))
 gitReposDF$name[2]
 #Find most popular language of each repository 
 #ADDNAMEDEFBACK
-Languages = data.frame(Repo, Language=character(), Bytes=integer())
+Languages = data.frame(Repo=character(), Language=character(), Bytes=integer())
 
 PopularLanguages = function(Languages, gitReposDF)
 {
@@ -48,32 +48,28 @@ PopularLanguages = function(Languages, gitReposDF)
     stop_for_status(reqTemp)
     jsonTemp = content(reqTemp)
     dataFrameTemp = jsonlite::fromJSON(jsonlite::toJSON(jsonTemp))
-    #Checks if repository actually has any languages listed
+    name = paste(gitReposDF$name[i])
+    #If no languages are listed, adds to data frame with a blank value
     if(length(dataFrameTemp) == 0)
     {
-      
+      newRow = data.frame(Repo=name, Language="None Entered", Bytes=0)
+      Languages = rbind(Languages, newRow)
     }else
     {
-      name = gitReposDF$name[i]
-      print(name)
       language = NULL
       bytes = -1
       #Find most popular language for the repository
       for(j in 1:length(dataFrameTemp))
       {
-        print(names(dataFrameTemp)[j])
-        print(as.numeric(dataFrameTemp[j]))
-        if(as.numeric(dataFrameTemp[j]) > -1)
+        if(as.numeric(dataFrameTemp[j]) > bytes)
         {
           language = names(dataFrameTemp)[j]
           bytes = as.numeric(dataFrameTemp[j])
         }
       }
       #Adds it to DF
-      newRow = data.frame(Repo="name", Language=language, Bytes=bytes)
-      print(newRow)
+      newRow = data.frame(Repo=name, Language=language, Bytes=bytes)
       Languages = rbind(Languages, newRow)
-      print(Languages)
     }
   }
   return(Languages)
@@ -82,61 +78,3 @@ PopularLanguages = function(Languages, gitReposDF)
 Languages = PopularLanguages(Languages, gitReposDF)
 Languages
 
-
-#Initialise first item in languages used dataframe
-reqTemp = GET(paste(gitReposDF$languages_url[1]), gtoken)
-stop_for_status(reqTemp)
-jsonTemp = content(reqTemp)
-gitLanguagesUsedDF = jsonlite::fromJSON(jsonlite::toJSON(jsonTemp))
-length(gitLanguagesUsedDF)
-
-#Finds languages used by each repository and increases count of each one found by 1 and number of bytes used
-for(i in 2:length(gitReposDF))
-{
-  reqTemp = GET(paste(gitReposDF$languages_url[i]), gtoken)
-  stop_for_status(reqTemp)
-  jsonTemp = content(reqTemp)
-  dataFrameTemp = jsonlite::fromJSON(jsonlite::toJSON(jsonTemp))
-  #Checks if repository actually has any languages listed
-  if(length(dataFrameTemp) == 0)
-  {
-    
-  }else
-  {
-    #For each column in temporary data frame, checks whether is appears in current data frame, adding number of bytes of
-    #code used in the current repository being searched in the language to the total amount of bytes of a language used
-    #if the language is already in the data frame or adding the new language and the number of bytes used by the current
-    #repository of it to the total data frame
-    for(j in 1:length(dataFrameTemp))
-    {
-      if(is.element(names(dataFrameTemp)[j], names(gitLanguagesUsedDF)))
-      {
-        #Add total number of bytes to existing column
-        index = match(names(dataFrameTemp)[j], names(gitLanguagesUsedDF))
-        gitLanguagesUsedDF[index] = as.numeric(gitLanguagesUsedDF[index]) + as.numeric(dataFrameTemp[j])
-        
-      }else
-      {
-        #Sets up new column
-        gitLanguagesUsedDF$temp = as.numeric(dataFrameTemp[j])
-        names(gitLanguagesUsedDF)[which(names(gitLanguagesUsedDF) == "temp")] <- names(dataFrameTemp)[j]
-      }
-    }
-  }
-}
-gitLanguagesUsedDF
-
-
-# Find Microsis repository
-gitMicrosis = gitReposDF[gitReposDF$name == "microsis",] 
-
-#Get languages used in Microsis repository
-gitMicrosis$languages_url
-req2 = GET(paste(gitMicrosis$languages_url), gtoken)
-stop_for_status(req2)
-json2 = content(req2)
-gitMicrosisLanguagesDF = jsonlite::fromJSON(jsonlite::toJSON(json2))
-#Number = Number of bytes of code written in the language
-is.element("Ruby", names(gitMicrosisLanguagesDF)[])
-match("JavaScript", names(gitMicrosisLanguagesDF))
-gitMicrosisLanguagesDF[1]
