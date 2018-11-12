@@ -35,6 +35,53 @@ json1 = content(req)
 
 # Convert to a data.frame
 gitReposDF = jsonlite::fromJSON(jsonlite::toJSON(json1))
+gitReposDF$name[2]
+#Find most popular language of each repository 
+#ADDNAMEDEFBACK
+Languages = data.frame(Repo, Language=character(), Bytes=integer())
+
+PopularLanguages = function(Languages, gitReposDF)
+{
+  for(i in 1:length(gitReposDF))
+  {
+    reqTemp = GET(paste(gitReposDF$languages_url[i]), gtoken)
+    stop_for_status(reqTemp)
+    jsonTemp = content(reqTemp)
+    dataFrameTemp = jsonlite::fromJSON(jsonlite::toJSON(jsonTemp))
+    #Checks if repository actually has any languages listed
+    if(length(dataFrameTemp) == 0)
+    {
+      
+    }else
+    {
+      name = gitReposDF$name[i]
+      print(name)
+      language = NULL
+      bytes = -1
+      #Find most popular language for the repository
+      for(j in 1:length(dataFrameTemp))
+      {
+        print(names(dataFrameTemp)[j])
+        print(as.numeric(dataFrameTemp[j]))
+        if(as.numeric(dataFrameTemp[j]) > -1)
+        {
+          language = names(dataFrameTemp)[j]
+          bytes = as.numeric(dataFrameTemp[j])
+        }
+      }
+      #Adds it to DF
+      newRow = data.frame(Repo="name", Language=language, Bytes=bytes)
+      print(newRow)
+      Languages = rbind(Languages, newRow)
+      print(Languages)
+    }
+  }
+  return(Languages)
+}
+
+Languages = PopularLanguages(Languages, gitReposDF)
+Languages
+
 
 #Initialise first item in languages used dataframe
 reqTemp = GET(paste(gitReposDF$languages_url[1]), gtoken)

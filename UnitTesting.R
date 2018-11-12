@@ -37,4 +37,5 @@ req <- GET("https://api.github.com/repos/rubinius/rubinius/languages", gtoken)
 stop_for_status(req)
 json1 = content(req)
 gitRubiniusDF = jsonlite::fromJSON(jsonlite::toJSON(json1))
-gitRubiniusDF
+print(gitRubiniusDF[1])
+print(as.numeric(gitRubiniusDF[1]))
