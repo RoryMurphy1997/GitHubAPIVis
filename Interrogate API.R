@@ -35,6 +35,8 @@ json1 = content(req)
 
 # Convert to a data.frame
 gitReposDF = jsonlite::fromJSON(jsonlite::toJSON(json1))
+
+#Find most popular language used for each repo in the given data.frame and the number of bytes of that language written
 PopularLanguages = function(gitRepos)
 {
   #Re-initialise Data Frame for unit testing
@@ -79,7 +81,56 @@ PopularLanguages = function(gitRepos)
     return(Languages)
   }
 }
-
 Languages = PopularLanguages(gitReposDF)
 Languages
 
+#Gets number of contributions (commits) made to each of the repositories in the data.frame
+ContributionsMade = function(gitRepos)
+{
+  #Re-initialise Data Frame for unit testing
+  Contributions = NULL
+  if(is.null(nrow(gitRepos)) | is.null(gitRepos$contributors_url))
+  {
+    print("Incorrect data frame given for repos")
+    return(Contributions)
+  }else
+  {
+    for(i in 1:nrow(gitRepos))
+    {
+      reqTemp = GET(paste(gitRepos$contributors_url[i]), gtoken)
+      stop_for_status(reqTemp)
+      jsonTemp = content(reqTemp)
+      dataFrameTemp = jsonlite::fromJSON(jsonlite::toJSON(jsonTemp))
+      dataFrameTemp
+      name = paste(gitRepos$name[i])
+      #If no contributors are listed, adds to data frame with a blank value
+      if(length(dataFrameTemp) == 0)
+      {
+        newRow = data.frame(Repo=name, NumberOfCommits=0, NumberOfContributors=0)
+        Contributions = rbind(Contributions, newRow)
+      }else
+      {
+        totalCommits=0
+        #Find most popular language for the repository
+        for(j in 1:length(dataFrameTemp$contributions))
+        {
+          totalCommits = totalCommits + as.numeric(dataFrameTemp$contributions[j])
+        }
+        #Adds it to DF
+        newRow = data.frame(Repo=name, NumberOfCommits=totalCommits, NumberOfContributors=length(dataFrameTemp$contributions))
+        Contributions = rbind(Contributions, newRow)
+      }
+    }
+    return(Contributions)
+  }
+}
+
+Contributions = ContributionsMade(gitReposDF)
+Contributions
+
+reqTemp = GET(paste(gitReposDF$contributors_url[1]), gtoken)
+stop_for_status(reqTemp)
+jsonTemp = content(reqTemp)
+dataFrameTemp = jsonlite::fromJSON(jsonlite::toJSON(jsonTemp))
+length(dataFrameTemp$contributions)
+dataFrameTemp$contributions[1]
