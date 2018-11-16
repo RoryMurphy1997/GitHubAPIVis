@@ -49,7 +49,7 @@ gitRubiniusDF = jsonlite::fromJSON(jsonlite::toJSON(json1))
 print(gitRubiniusDF[1])
 print(as.numeric(gitRubiniusDF[1]))
 
-#Test PopularLanguages 
+#Test PopularLanguages, the values have been cross checked manually using GitHub API on a web browser.
 
 #1. Given an empty data frame, returns NULL and error message
 PopularLanguages(NULL)
@@ -65,3 +65,21 @@ PopularLanguages(gitMicrosisRepo)
 #4. Given a data frame with more than one repository, returns the most popular language of each repository
 #Should be JavaScript (bytes = 124846) and C (bytes = 23614738)
 PopularLanguages(gitTwoRepos)
+
+#Test ContributionsMade, the values have been cross checked manually using GitHub API on a web browser.
+
+#1. Given an empty data frame, returns NULL and error message
+ContributionsMade(NULL)
+
+#2. Given a data frame with no contributors_url value, returns null
+DFTest = data.frame(Name = c("Sandra", "John"))
+ContributionsMade(DFTest)
+
+#3. Given a data frame of one repository, returns the number of commits and number of contributors to this repository
+#Should be 16 commits from 1 contributor
+ContributionsMade(gitMicrosisRepo)
+
+#4. Given a data frame with more than one repository, returns the number of commits and number of contributors to
+#each repository
+#Should be 16 commits and one contributor and  14599 commits by 30 contributors
+ContributionsMade(gitTwoRepos)

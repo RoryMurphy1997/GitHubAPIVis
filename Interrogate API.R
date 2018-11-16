@@ -128,9 +128,4 @@ ContributionsMade = function(gitRepos)
 Contributions = ContributionsMade(gitReposDF)
 Contributions
 
-reqTemp = GET(paste(gitReposDF$contributors_url[1]), gtoken)
-stop_for_status(reqTemp)
-jsonTemp = content(reqTemp)
-dataFrameTemp = jsonlite::fromJSON(jsonlite::toJSON(jsonTemp))
-length(dataFrameTemp$contributions)
-dataFrameTemp$contributions[1]
+
