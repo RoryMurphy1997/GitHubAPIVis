@@ -11,9 +11,9 @@ server <- function(input, output) {
   output$graph <- renderPlot({
     data = switch(input$size,
                   "All sizes" = Contributions,
-                  "Large" = Contributions[1:30,],
-                  "Medium" = Contributions[31:60,],
-                  "Small" = Contributions[61:100,])
+                  "Large (>200 commits)" = largeContributions,
+                  "Medium (200 - 50 commits)" = mediumContributions,
+                  "Small (<50 commits)" = smallContributions)
     plot(data)
   })
   
@@ -30,9 +30,9 @@ ui <- fluidPage(
     selectInput("size", 
                 label = "Choose a size of repositories used.",
                 choices = c("All sizes", 
-                            "Large",
-                            "Medium", 
-                            "Small"),
+                            "Large (>200 commits)",
+                            "Medium (200 - 50 commits)", 
+                            "Small (<50 commits)"),
                 selected = "All sizes"),
     ),
   

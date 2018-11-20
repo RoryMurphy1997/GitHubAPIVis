@@ -32,7 +32,6 @@ json1 = content(req)
 
 # Convert to a data.frame
 gitReposDF = jsonlite::fromJSON(jsonlite::toJSON(json1))
-
 #Find most popular language used for each repo in the given data.frame and the number of bytes of that language written
 PopularLanguages = function(gitRepos)
 {
@@ -108,7 +107,7 @@ ContributionsMade = function(gitRepos)
       }else
       {
         totalCommits=0
-        #Find most popular language for the repository
+        #Sums total number of commits made to each repository
         for(j in 1:length(dataFrameTemp$contributions))
         {
           totalCommits = totalCommits + as.numeric(dataFrameTemp$contributions[j])
@@ -122,6 +121,33 @@ ContributionsMade = function(gitRepos)
   }
 }
 Contributions = ContributionsMade(gitReposDF)
-Contributions
+Contributions$Repo[5]
+
+#Combine Contributions and Languages
+fullData = cbind(Contributions, Languages[,-1])
+fullData[2,]$Bytes
+
+#Subsets Data into large, medium and small
+largeData = fullData[which(fullData$NumberOfCommits > 200),]
+mediumData = fullData[which(fullData$NumberOfCommits <= 200 & fullData$NumberOfCommits >= 50),]
+smallData = fullData[which(fullData$NumberOfCommits < 50),]
+
+#Creates data for visualisations of all sizes
+languagesGraphData = data.frame(Language = fullData$Language[1], totalBytes = fullData$Bytes[1], numberOfAppearances = 1)
+for(i in 2:nrow(fullData))
+{
+  #Increments count of language already recorded
+  if(fullData$Language[i] %in% languagesGraphData$Language)
+  {
+    index = match(fullData$Language[i],languagesGraphData$Language)
+    languagesGraphData[index,]$totalBytes = as.numeric(languagesGraphData[index,]$totalBytes) + fullData[i,]$Bytes
+    languagesGraphData[index,]$numberOfAppearances = as.numeric(languagesGraphData[index,]$numberOfAppearances) + 1
+  }else{
+    #Adds newly observed language and the number of bytes written in it 
+    newRow = data.frame(Language = fullData$Language[i], totalBytes = fullData$Bytes[i], numberOfAppearances = 1)
+    languagesGraphData = rbind(languagesGraphData, newRow)
+  }
+}
+languagesFullGraphData
 
 
