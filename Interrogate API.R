@@ -1,13 +1,14 @@
 #Installs relevant packages only if they arent already installed
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load("jsonlite", "httpuv", "httr", "devtools","htmlwidgets")
-
+pacman::p_load("jsonlite", "httpuv", "httr", "devtools", "shiny")
 
 #Opens necessary libraries
 library(jsonlite)
 library(httpuv)
 library(httr)
 library(devtools)
+#library(sunburstR)
+library(shiny)
 
 oauth_endpoints("github")
 
@@ -78,6 +79,7 @@ PopularLanguages = function(gitRepos)
   }
 }
 Languages = PopularLanguages(gitReposDF)
+Languages
 
 #Gets number of contributions (commits) made to each of the repositories in the data.frame
 ContributionsMade = function(gitRepos)
@@ -119,9 +121,7 @@ ContributionsMade = function(gitRepos)
     return(Contributions)
   }
 }
-
 Contributions = ContributionsMade(gitReposDF)
-
-
+Contributions
 
 
