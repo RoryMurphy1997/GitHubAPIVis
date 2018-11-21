@@ -14,8 +14,8 @@ server <- function(input, output) {
                   "Large (>200 commits)" = visLargeData,
                   "Medium (200 - 50 commits)" = visMediumData,
                   "Small (<50 commits)" = visSmallData)
-    par(mar=c(11,5,1,1))
-    barplot(data$numberOfAppearances,names.arg = data$Language,col = 4, las=2)
+    par(mar=c(11,8,1,1))
+    barplot(data$numberOfAppearances,names.arg = data$Language,col = 4, las=2, main = "Number of Repos where Language is Most Popular",ylab="Number of Repos")
   })
   
   output$graph2 <- renderPlot({
@@ -24,8 +24,8 @@ server <- function(input, output) {
                   "Large (>200 commits)" = visLargeData,
                   "Medium (200 - 50 commits)" = visMediumData,
                   "Small (<50 commits)" = visSmallData)
-    par(mar=c(11,5,1,1))
-    barplot(data$totalBytes,names.arg = data$Language,col = 2, las=2)
+    par(mar=c(11,8,1,1))
+    barplot(data$totalBytes,names.arg = data$Language,col = 2, las=2, horiz = TRUE, main = "Number of Bytes of Code written in Repos where Language is Most Popular")
   })
   
 }
@@ -36,19 +36,20 @@ ui <- fluidPage(
   sidebarLayout(
     
     sidebarPanel(
-      helpText("Plots the different languages used in 100 repositories by popularity. Can be broken down by number of commits made to said repository.")),
+      helpText("Select between different sized repos based on number of commits made to them."),
       
-    selectInput("size", 
-                label = "Choose a size of repositories used.",
-                choices = c("All sizes", 
-                            "Large (>200 commits)",
-                            "Medium (200 - 50 commits)", 
-                            "Small (<50 commits)"),
-                selected = "All sizes"),
-    ),
+      selectInput("size", 
+                  label = "Choose a size of repositories used.",
+                  choices = c("All sizes", 
+                              "Large (>200 commits)",
+                              "Medium (200 - 50 commits)", 
+                              "Small (<50 commits)"),
+                  selected = "All sizes")),
+    
+      mainPanel(plotOutput("graph"),
+              plotOutput("graph2"))
+  )
   
-  mainPanel(plotOutput("graph"),
-            plotOutput("graph2"))
 )
 
 shinyApp(ui = ui, server = server)

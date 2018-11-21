@@ -54,7 +54,7 @@ PopularLanguages = function(gitRepos)
       #If no languages are listed, adds to data frame with a blank value
       if(length(dataFrameTemp) == 0)
       {
-        newRow = data.frame(Repo=name, Language="No Language Given", Bytes=0)
+        newRow = data.frame(Repo=name, Language="None Entered", Bytes=0)
         Languages = rbind(Languages, newRow)
       }else
       {
@@ -161,14 +161,11 @@ visFullData = CreateGraphData(fullDataCollected)
 visLargeData = CreateGraphData(largeData)
 visMediumData = CreateGraphData(mediumData)
 visSmallData = CreateGraphData(smallData)
-
-
-
+visLargeData
 ?barplot
+?abline
 visFullData
-?pie
-par(mar=c(11,5,5,1))
-visFullData$totalBytes
-barplot(visFullData$totalBytes,names.arg = visFullData$Language,col = 2, las=2)
-barplot(visFullData$numberOfAppearances,names.arg = visFullData$Language,col = 2, las=2, main = "Most Popular")
-pie(visFullData$numberOfAppearances, labels =  visFullData$Language, main="% of Repositories where Lnaguage was most popular one used")
+par(mar=c(11,11,5,1))
+barplot(visFullData$totalBytes,names.arg = visFullData$Language,col = 2, las=2,main = "Number of Bytes of Code written in Repos where Language is Most Popular", horiz=TRUE)
+abline(v = mean(visFullData$totalBytes))
+barplot(visFullData$numberOfAppearances,names.arg = visFullData$Language,col = 4, las=2, main = "Number of Repos where Language is Most Popular",ylab="Number of Repos")
