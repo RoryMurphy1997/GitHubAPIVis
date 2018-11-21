@@ -54,7 +54,7 @@ PopularLanguages = function(gitRepos)
       #If no languages are listed, adds to data frame with a blank value
       if(length(dataFrameTemp) == 0)
       {
-        newRow = data.frame(Repo=name, Language="None Entered", Bytes=0)
+        newRow = data.frame(Repo=name, Language="No Language Given", Bytes=0)
         Languages = rbind(Languages, newRow)
       }else
       {
@@ -78,7 +78,6 @@ PopularLanguages = function(gitRepos)
   }
 }
 Languages = PopularLanguages(gitReposDF)
-Languages
 
 #Gets number of contributions (commits) made to each of the repositories in the data.frame
 ContributionsMade = function(gitRepos)
@@ -121,11 +120,10 @@ ContributionsMade = function(gitRepos)
   }
 }
 Contributions = ContributionsMade(gitReposDF)
-Contributions$Repo[5]
 
 #Combine Contributions and Languages
-fullData = cbind(Contributions, Languages[,-1])
-fullData[2,]$Bytes
+fullDataCollected = cbind(Contributions, Languages[,-1])
+fullDataCollected
 
 #Subsets Data into large, medium and small
 largeData = fullData[which(fullData$NumberOfCommits > 200),]
@@ -133,21 +131,44 @@ mediumData = fullData[which(fullData$NumberOfCommits <= 200 & fullData$NumberOfC
 smallData = fullData[which(fullData$NumberOfCommits < 50),]
 
 #Creates data for visualisations of all sizes
-languagesGraphData = data.frame(Language = fullData$Language[1], totalBytes = fullData$Bytes[1], numberOfAppearances = 1)
-for(i in 2:nrow(fullData))
+CreateGraphData <- function(fullData)
 {
-  #Increments count of language already recorded
-  if(fullData$Language[i] %in% languagesGraphData$Language)
+  if(is.null(nrow(fullData)) | is.null(fullData$Language) | is.null(fullData$Bytes))
   {
-    index = match(fullData$Language[i],languagesGraphData$Language)
-    languagesGraphData[index,]$totalBytes = as.numeric(languagesGraphData[index,]$totalBytes) + fullData[i,]$Bytes
-    languagesGraphData[index,]$numberOfAppearances = as.numeric(languagesGraphData[index,]$numberOfAppearances) + 1
+    print("Invalid Data Entry")
+    return(NULL)
   }else{
-    #Adds newly observed language and the number of bytes written in it 
-    newRow = data.frame(Language = fullData$Language[i], totalBytes = fullData$Bytes[i], numberOfAppearances = 1)
-    languagesGraphData = rbind(languagesGraphData, newRow)
+    languagesGraphData = data.frame(Language = NULL, totalBytes = NULL, numberOfAppearances = NULL)
+    for(i in 1:nrow(fullData))
+    {
+      #Increments count of language already recorded
+      if(fullData$Language[i] %in% languagesGraphData$Language)
+      {
+        index = match(fullData$Language[i],languagesGraphData$Language)
+        languagesGraphData[index,]$totalBytes = as.numeric(languagesGraphData[index,]$totalBytes) + fullData[i,]$Bytes
+        languagesGraphData[index,]$numberOfAppearances = as.numeric(languagesGraphData[index,]$numberOfAppearances) + 1
+      }else{
+        #Adds newly observed language and the number of bytes written in it 
+        newRow = data.frame(Language = fullData$Language[i], totalBytes = fullData$Bytes[i], numberOfAppearances = 1)
+        languagesGraphData = rbind(languagesGraphData, newRow)
+      }
+    }
+    return(languagesGraphData)
   }
 }
-languagesFullGraphData
+
+visFullData = CreateGraphData(fullDataCollected)
+visLargeData = CreateGraphData(largeData)
+visMediumData = CreateGraphData(mediumData)
+visSmallData = CreateGraphData(smallData)
 
 
+
+?barplot
+visFullData
+?pie
+par(mar=c(11,5,5,1))
+visFullData$totalBytes
+barplot(visFullData$totalBytes,names.arg = visFullData$Language,col = 2, las=2)
+barplot(visFullData$numberOfAppearances,names.arg = visFullData$Language,col = 2, las=2, main = "Most Popular")
+pie(visFullData$numberOfAppearances, labels =  visFullData$Language, main="% of Repositories where Lnaguage was most popular one used")

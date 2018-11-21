@@ -10,11 +10,22 @@ server <- function(input, output) {
   
   output$graph <- renderPlot({
     data = switch(input$size,
-                  "All sizes" = Contributions,
-                  "Large (>200 commits)" = largeContributions,
-                  "Medium (200 - 50 commits)" = mediumContributions,
-                  "Small (<50 commits)" = smallContributions)
-    plot(data)
+                  "All sizes" = visFullData,
+                  "Large (>200 commits)" = visLargeData,
+                  "Medium (200 - 50 commits)" = visMediumData,
+                  "Small (<50 commits)" = visSmallData)
+    par(mar=c(11,5,1,1))
+    barplot(data$numberOfAppearances,names.arg = data$Language,col = 4, las=2)
+  })
+  
+  output$graph2 <- renderPlot({
+    data = switch(input$size,
+                  "All sizes" = visFullData,
+                  "Large (>200 commits)" = visLargeData,
+                  "Medium (200 - 50 commits)" = visMediumData,
+                  "Small (<50 commits)" = visSmallData)
+    par(mar=c(11,5,1,1))
+    barplot(data$totalBytes,names.arg = data$Language,col = 2, las=2)
   })
   
 }
@@ -36,7 +47,8 @@ ui <- fluidPage(
                 selected = "All sizes"),
     ),
   
-  mainPanel(plotOutput("graph"))
+  mainPanel(plotOutput("graph"),
+            plotOutput("graph2"))
 )
 
 shinyApp(ui = ui, server = server)
