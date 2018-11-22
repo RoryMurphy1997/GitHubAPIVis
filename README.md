@@ -1,10 +1,15 @@
 # GitHubAPIVis
 Pull data from GitHub API and create a webpage with a visualisation of said data
 
-Requires installing the preview release of RStudio v1.2 of RStudio (you need this version of RStudio to take advantage of various integrated tools for authoring D3 scripts with r2d3). Link can be found here: https://www.rstudio.com/products/rstudio/download/preview/
+By running the following lines in R, the interactive visualisation can be displayed fully, with an option to view it in a web browser. This code is also contained in "Test.R" so simply downloading that file and running it will produce the visualisation.
 
-After this, simply download "Interrogate API.R", open R, set working directory to wherever you downloaded "Interrogate API.R" and run the following code:
+install.packages("shiny")
+library(shiny)
+runGitHub( "GitHubAPIVis", "RoryMurphy1997") 
 
-source("Interrogate API.R", echo = TRUE)
+The first line installs "Shiny" if you have not already installed it. Shiny is the package used to build the visualisation, the second line will notify R to use Shiny for the third line, which runs the application directly from the R code here on GitHub.
 
-This will run the code necessary to produce the visualisation, installing the needed packages in R if they have not been installed on your device.
+The R file "app.R" is called, which in turn runs "Interrogate API.R". "Interrogate API.R" pulls and processes the relevant data used by the visualisation from GitHub, installing any R packages needed to do so. After this, "app.R" runs the visualisation, updating the graphs in real time when different options (such as orientation) are selected. Thus, if the R code is stopped, the visualisation page will no longer work. Screenshots of the visualisation have been provided in this repository.
+
+Finally, "UnitTesting.R" contains a number of unit tests to ensure the functions used in "Interrogate API.R" work correctly. Screenshots of these have also been provided.
+
