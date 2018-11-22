@@ -1,4 +1,3 @@
-#install.packages("shiny")
-#library(shiny)
-#runApp("app.R")
+install.packages("shiny")
+library(shiny)
 runGitHub( "GitHubAPIVis", "RoryMurphy1997") 
