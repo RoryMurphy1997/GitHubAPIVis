@@ -126,9 +126,9 @@ fullDataCollected = cbind(Contributions, Languages[,-1])
 fullDataCollected
 
 #Subsets Data into large, medium and small
-largeData = fullData[which(fullData$NumberOfCommits > 200),]
-mediumData = fullData[which(fullData$NumberOfCommits <= 200 & fullData$NumberOfCommits >= 50),]
-smallData = fullData[which(fullData$NumberOfCommits < 50),]
+largeData = fullDataCollected[which(fullDataCollected$NumberOfCommits > 200),]
+mediumData = fullDataCollected[which(fullDataCollected$NumberOfCommits <= 200 & fullDataCollected$NumberOfCommits >= 50),]
+smallData = fullDataCollected[which(fullDataCollected$NumberOfCommits < 50),]
 
 #Creates data for visualisations of all sizes
 CreateGraphData <- function(fullData)
@@ -161,10 +161,7 @@ visFullData = CreateGraphData(fullDataCollected)
 visLargeData = CreateGraphData(largeData)
 visMediumData = CreateGraphData(mediumData)
 visSmallData = CreateGraphData(smallData)
-visLargeData
-?barplot
-?abline
-visFullData
+
 par(mar=c(11,11,5,1))
 barplot(visFullData$totalBytes,names.arg = visFullData$Language,col = 2, las=2,main = "Number of Bytes of Code written in Repos where Language is Most Popular", horiz=TRUE)
 abline(v = mean(visFullData$totalBytes))

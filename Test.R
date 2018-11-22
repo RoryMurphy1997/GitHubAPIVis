@@ -1,3 +1,3 @@
-install.packages("shiny")
-library(shiny)
+#install.packages("shiny")
+#library(shiny)
 runApp("app.R")

@@ -14,8 +14,11 @@ server <- function(input, output) {
                   "Large (>200 commits)" = visLargeData,
                   "Medium (200 - 50 commits)" = visMediumData,
                   "Small (<50 commits)" = visSmallData)
+    orient = switch(input$rotation1,
+                    "Horizontal" = TRUE,
+                    "Vertical" = FALSE)
     par(mar=c(11,8,1,1))
-    barplot(data$numberOfAppearances,names.arg = data$Language,col = 4, las=2, main = "Number of Repos where Language is Most Popular",ylab="Number of Repos")
+    barplot(data$numberOfAppearances,names.arg = data$Language,col = 4, las=2, horiz = orient, main = "Number of Repos where Language is Most Popular")
   })
   
   output$graph2 <- renderPlot({
@@ -24,8 +27,11 @@ server <- function(input, output) {
                   "Large (>200 commits)" = visLargeData,
                   "Medium (200 - 50 commits)" = visMediumData,
                   "Small (<50 commits)" = visSmallData)
+    orient = switch(input$rotation2,
+                    "Horizontal" = TRUE,
+                    "Vertical" = FALSE)
     par(mar=c(11,8,1,1))
-    barplot(data$totalBytes,names.arg = data$Language,col = 2, las=2, horiz = TRUE, main = "Number of Bytes of Code written in Repos where Language is Most Popular")
+    barplot(data$totalBytes,names.arg = data$Language,col = 2, las=2, horiz = orient, main = "Number of Bytes of Code written in Repos where Language is Most Popular")
   })
   
 }
@@ -44,7 +50,21 @@ ui <- fluidPage(
                               "Large (>200 commits)",
                               "Medium (200 - 50 commits)", 
                               "Small (<50 commits)"),
-                  selected = "All sizes")),
+                  selected = "All sizes"),
+      
+      helpText("Choose vertical or horizontal orientation."),
+    
+    selectInput("rotation1", 
+                label = "Choose orientation of the first graph.",
+                choices = c("Horizontal", 
+                            "Vertical"),
+                selected = "Vertical"),
+    
+    selectInput("rotation2", 
+                label = "Choose orientation of the second graph.",
+                choices = c("Horizontal", 
+                            "Vertical"),
+                selected = "Vertical")),
     
       mainPanel(plotOutput("graph"),
               plotOutput("graph2"))
