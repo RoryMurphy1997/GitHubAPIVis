@@ -92,19 +92,19 @@ CreateGraphData(DFTest)
 DFTest = data.frame(NBytes = c("Sandra", "John"))
 CreateGraphData(DFTest)
 
-#4. Given data for one reository, returns relevant information for visualising said data.
+#4. Given data for one repository, returns relevant information for visualising said data.
 #Should be 124846 totalBytes and 1 appearance for javascript
 temp = cbind(ContributionsMade(gitMicrosisRepo),PopularLanguages(gitMicrosisRepo)[,-1])
 CreateGraphData(temp)
 
-#4. Given data for two reositories with different popular languages, returns relevant information for visualising said
+#5. Given data for two repositories with different popular languages, returns relevant information for visualising said
 #data.
 #Should be 124846 totalBytes and 1 appearance for javascript and
 #23614738 bytes and 1 apearance for C
 temp2 = cbind(ContributionsMade(gitTwoRepos),PopularLanguages(gitTwoRepos)[,-1])
 CreateGraphData(temp2)
 
-#5. Given two repositories with same most pipular languages, combines number of bytes of language written.
+#6. Given two repositories with same most pipular languages, combines number of bytes of language written.
 #Should be 2 appearences and 251434 bytes of data
 temp3 = cbind(ContributionsMade(gitJSRepos),PopularLanguages(gitJSRepos)[,-1])
 temp3
