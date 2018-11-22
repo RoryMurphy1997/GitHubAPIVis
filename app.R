@@ -14,9 +14,16 @@ server <- function(input, output) {
                   "Large (>200 commits)" = visLargeData,
                   "Medium (200 - 50 commits)" = visMediumData,
                   "Small (<50 commits)" = visSmallData)
+    
     orient = switch(input$rotation1,
                     "Horizontal" = TRUE,
                     "Vertical" = FALSE)
+    
+    data = switch(input$order,
+                  "Unordered" = data,
+                  "Ascending" = data[order(data$numberOfAppearances, decreasing = FALSE),],
+                  "Descending" = data[order(data$numberOfAppearances, decreasing = TRUE),])
+    
     par(mar=c(11,8,1,1))
     barplot(data$numberOfAppearances,names.arg = data$Language,col = 4, las=2, horiz = orient, main = "Number of Repos where Language is Most Popular")
   })
@@ -27,9 +34,16 @@ server <- function(input, output) {
                   "Large (>200 commits)" = visLargeData,
                   "Medium (200 - 50 commits)" = visMediumData,
                   "Small (<50 commits)" = visSmallData)
+    
     orient = switch(input$rotation2,
                     "Horizontal" = TRUE,
                     "Vertical" = FALSE)
+    
+    data = switch(input$order,
+                  "Unordered" = data,
+                  "Ascending" = data[order(data$totalBytes, decreasing = FALSE),],
+                  "Descending" = data[order(data$totalBytes, decreasing = TRUE),])
+    
     par(mar=c(11,8,1,1))
     barplot(data$totalBytes,names.arg = data$Language,col = 2, las=2, horiz = orient, main = "Number of Bytes of Code written in Repos where Language is Most Popular")
   })
@@ -64,7 +78,16 @@ ui <- fluidPage(
                 label = "Choose orientation of the second graph.",
                 choices = c("Horizontal", 
                             "Vertical"),
-                selected = "Vertical")),
+                selected = "Vertical"),
+    
+    radioButtons("order", 
+                 label = "Select how to order data",
+                 choices = list("By Language" = "Unordered", "Ascending" = "Ascending",
+                                "Descending" = "Descending"),selected = "Unordered")
+    
+    
+    
+    ),
     
       mainPanel(plotOutput("graph"),
               plotOutput("graph2"))

@@ -161,8 +161,6 @@ visFullData = CreateGraphData(fullDataCollected)
 visLargeData = CreateGraphData(largeData)
 visMediumData = CreateGraphData(mediumData)
 visSmallData = CreateGraphData(smallData)
-
-par(mar=c(11,11,5,1))
-barplot(visFullData$totalBytes,names.arg = visFullData$Language,col = 2, las=2,main = "Number of Bytes of Code written in Repos where Language is Most Popular", horiz=TRUE)
-abline(v = mean(visFullData$totalBytes))
-barplot(visFullData$numberOfAppearances,names.arg = visFullData$Language,col = 4, las=2, main = "Number of Repos where Language is Most Popular",ylab="Number of Repos")
+visFullData
+?order
+visFullData[order(visFullData$numberOfAppearances, decreasing = FALSE),]
