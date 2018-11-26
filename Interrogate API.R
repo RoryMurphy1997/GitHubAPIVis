@@ -7,7 +7,6 @@ library(jsonlite)
 library(httpuv)
 library(httr)
 library(devtools)
-#library(sunburstR)
 library(shiny)
 
 oauth_endpoints("github")
@@ -49,7 +48,6 @@ PopularLanguages = function(gitRepos)
       stop_for_status(reqTemp)
       jsonTemp = content(reqTemp)
       dataFrameTemp = jsonlite::fromJSON(jsonlite::toJSON(jsonTemp))
-      dataFrameTemp
       name = paste(gitRepos$name[i])
       #If no languages are listed, adds to data frame with a blank value
       if(length(dataFrameTemp) == 0)
@@ -96,7 +94,6 @@ ContributionsMade = function(gitRepos)
       stop_for_status(reqTemp)
       jsonTemp = content(reqTemp)
       dataFrameTemp = jsonlite::fromJSON(jsonlite::toJSON(jsonTemp))
-      dataFrameTemp
       name = paste(gitRepos$name[i])
       #If no contributors are listed, adds to data frame with a blank value
       if(length(dataFrameTemp) == 0)
@@ -123,7 +120,6 @@ Contributions = ContributionsMade(gitReposDF)
 
 #Combine Contributions and Languages
 fullDataCollected = cbind(Contributions, Languages[,-1])
-fullDataCollected
 
 #Subsets Data into large, medium and small
 largeData = fullDataCollected[which(fullDataCollected$NumberOfCommits > 200),]
@@ -156,11 +152,7 @@ CreateGraphData <- function(fullData)
     return(languagesGraphData)
   }
 }
-
 visFullData = CreateGraphData(fullDataCollected)
 visLargeData = CreateGraphData(largeData)
 visMediumData = CreateGraphData(mediumData)
 visSmallData = CreateGraphData(smallData)
-visFullData
-?order
-visFullData[order(visFullData$numberOfAppearances, decreasing = FALSE),]
