@@ -7,7 +7,7 @@ server <- function(input, output) {
   output$selected_var <- renderText({ 
     paste("You have selected", input$size)
   })
-  
+  #Number of Appearances visualization
   output$graph <- renderPlot({
     data = switch(input$size,
                   "All sizes" = visFullData,
@@ -27,7 +27,7 @@ server <- function(input, output) {
     par(mar=c(11,8,1,1))
     barplot(data$numberOfAppearances,names.arg = data$Language,col = 4, las=2, horiz = orient, main = "Number of Repos where Language is Most Popular")
   })
-  
+  #Number of bytes written visualization
   output$graph2 <- renderPlot({
     data = switch(input$size,
                   "All sizes" = visFullData,
@@ -50,6 +50,7 @@ server <- function(input, output) {
   
 }
 
+#Builds user interface of visualisation
 ui <- fluidPage(
   titlePanel("Graphs of GitHub API Data"),
   
